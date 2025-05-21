@@ -9,5 +9,5 @@ venv/
 .venv/
 
 # === Environment variables ===
-.env
+*.env
 .env.*
