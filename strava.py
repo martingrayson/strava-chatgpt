@@ -3,10 +3,13 @@ import requests
 from datetime import datetime
 import python-dotenv
 
+load_dotenv()
+
+CLIENT_ID = os.environ.get("STRAVA_CLIENT_ID")
+CLIENT_SECRET = os.environ.get("STRAVA_CLIENT_SECRET")
+REFRESH_TOKEN = os.environ.get("STRAVA_REFRESH_TOKEN")
 
 app = Flask(__name__)
-
-# === STRAVA API ===
 
 def get_access_token(client_id, client_secret, refresh_token):
     response = requests.post(
