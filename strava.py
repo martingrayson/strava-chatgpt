@@ -1,15 +1,8 @@
 from flask import Flask, request, render_template_string
 import requests
 from datetime import datetime
-import os
-from dotenv import load_dotenv
+import python-dotenv
 
-# === LOAD ENV ===
-load_dotenv()
-
-CLIENT_ID = os.environ.get("STRAVA_CLIENT_ID")
-CLIENT_SECRET = os.environ.get("STRAVA_CLIENT_SECRET")
-REFRESH_TOKEN = os.environ.get("STRAVA_REFRESH_TOKEN")
 
 app = Flask(__name__)
 
@@ -29,9 +22,9 @@ def get_access_token(client_id, client_secret, refresh_token):
     return response.json()['access_token']
 
 def get_recent_runs(access_token, limit=5):
-    headers = {'Authorization': f'Bearer ' + access_token}
+    headers = {'Authorization': f'Bearer {access_token}'}
     response = requests.get(
-        'https://www.strava.com/api/v3/athlete/activities?per_page=10',
+        f'https://www.strava.com/api/v3/athlete/activities?per_page=10',
         headers=headers
     )
     response.raise_for_status()
@@ -42,7 +35,7 @@ def get_recent_runs(access_token, limit=5):
     return runs[:limit]
 
 def get_activity_data(activity_id, access_token):
-    headers = {'Authorization': f'Bearer ' + access_token}
+    headers = {'Authorization': f'Bearer {access_token}'}
     response = requests.get(
         f'https://www.strava.com/api/v3/activities/{activity_id}?include_all_efforts=',
         headers=headers
@@ -78,7 +71,7 @@ def format_structured_splits(laps):
     for lap in laps:
         lines.append(
             f"Lap {lap.get('lap_index')}: {lap.get('distance')}m in {lap.get('moving_time')}s, "
-            f"Speed: {lap.get('average_speed')} m/s, HR: {lap.get('average_heartrate')} bpm"
+            f"Avg Speed: {lap.get('average_speed')} m/s, Avg HR: {lap.get('average_heartrate')} bpm, Average cadence(spm): {lap.get('average_cadence')}"
         )
     return lines
 
@@ -86,12 +79,12 @@ def format_regular_splits(splits):
     lines = ["Here are the splits:\n"]
     for split in splits:
         lines.append(
-            f"Split {split.get('split')}: {split.get('distance')}m in {split.get('moving_time')}s, "
-            f"Speed: {split.get('average_speed')} m/s, HR: {split.get('average_heartrate')} bpm"
+            f"Split {split.get('split')}: {split.get('distance')}m in {split.get('moving_time')}s, Elevation change(m): {split.get('elevation_difference')}, "
+            f"Avg Speed: {split.get('average_speed')} m/s, Avg HR: {split.get('average_heartrate')} bpm"
         )
     return lines
 
-# === UI TEMPLATE ===
+# === FLASK ROUTE ===
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -134,18 +127,6 @@ HTML_TEMPLATE = """
             padding: 1rem;
             border-radius: 6px;
             white-space: pre-wrap;
-            position: relative;
-        }
-        button.copy-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #0077cc;
-            color: white;
-            border: none;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            cursor: pointer;
         }
         form {
             margin-top: 2rem;
@@ -191,16 +172,7 @@ HTML_TEMPLATE = """
 
     {% if summary %}
         <h2>Activity Summary</h2>
-        <pre id="summary-text">{{ summary }}</pre>
-        <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
-        <script>
-        function copyToClipboard() {
-            const text = document.getElementById("summary-text").innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Copied to clipboard!");
-            });
-        }
-        </script>
+        <pre>{{ summary }}</pre>
     {% elif error %}
         <p style="color: red;">{{ error }}</p>
     {% endif %}
@@ -215,8 +187,6 @@ HTML_TEMPLATE = """
 </html>
 """
 
-# === MAIN FLASK ROUTE ===
-
 @app.route('/', methods=['GET', 'POST'])
 def home():
     summary = None
@@ -228,6 +198,7 @@ def home():
         access_token = get_access_token(CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN)
         runs = get_recent_runs(access_token)
 
+        # Only extract the activity_id from the relevant source
         if request.method == 'POST':
             activity_id = request.form.get("activity_id")
         elif request.method == 'GET':
@@ -245,5 +216,6 @@ def home():
 
     return render_template_string(HTML_TEMPLATE, runs=runs, summary=summary, error=error)
 
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True, port=3000)
