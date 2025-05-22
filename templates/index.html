@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Strava Activity Viewer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Strava: Recent Runs</h1>
+
+    {% if runs %}
+        <ul>
+        {% for run in runs %}
+            <li>
+                <a href="/?activity_id={{ run.id }}">{{ run.name }}</a><br>
+                <small>{{ run.date_pretty }} — {{ "%.2f"|format(run.distance / 1000) }} km</small>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No recent runs found.</p>
+    {% endif %}
+
+    {% if summary %}
+        <h2>Activity Summary</h2>
+        <div style="position: relative;">
+            <pre id="summary-text">{{ summary }}</pre>
+            <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+        </div>
+        <script>
+            function copyToClipboard() {
+                const text = document.getElementById("summary-text").innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                }).catch(() => {
+                    alert("Failed to copy text.");
+                });
+            }
+        </script>
+    {% elif error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        <h3>Manually Fetch a Run</h3>
+        <label for="activity_id">Strava Activity ID:</label>
+        <input type="text" name="activity_id" required>
+        <button type="submit">Fetch</button>
+    </form>
+</body>
+</html>

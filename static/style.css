@@ -1,0 +1,79 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    max-width: 800px;
+    margin: auto;
+    padding: 2rem;
+    background-color: #f7f9fb;
+    color: #333;
+}
+h1, h2, h3 {
+    color: #222;
+}
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+li {
+    background: white;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+a {
+    font-weight: bold;
+    text-decoration: none;
+    color: #0077cc;
+}
+a:hover {
+    text-decoration: underline;
+}
+pre {
+    background: #eee;
+    padding: 1rem;
+    border-radius: 6px;
+    white-space: pre-wrap;
+}
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #0077cc;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+.copy-btn:hover {
+    background: #005fa3;
+}
+form {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+input[type="text"] {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+button {
+    padding: 0.5rem 1rem;
+    background: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+button:hover {
+    background: #005fa3;
+}
+.error {
+    color: red;
+}
