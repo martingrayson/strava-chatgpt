@@ -157,6 +157,21 @@ HTML_TEMPLATE = """
         button:hover {
             background: #005fa3;
         }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #0077cc;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .copy-btn:hover {
+            background: #005fa3;
+        }
     </style>
 </head>
 <body>
@@ -175,8 +190,20 @@ HTML_TEMPLATE = """
     {% endif %}
 
     {% if summary %}
-        <h2>Activity Summary</h2>
-        <pre>{{ summary }}</pre>
+    <h2>Activity Summary</h2>
+    <div style="position: relative;">
+        <pre id="summary-text">{{ summary }}</pre>
+        <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+    </div>
+    <script>
+        function copyToClipboard() {
+            const text = document.getElementById("summary-text").innerText;
+            navigator.clipboard.writeText(text).then(() => {
+            }).catch(() => {
+                alert("Failed to copy text.");
+            });
+        }
+    </script>
     {% elif error %}
         <p style="color: red;">{{ error }}</p>
     {% endif %}
