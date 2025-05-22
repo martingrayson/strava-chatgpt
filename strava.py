@@ -1,7 +1,8 @@
 from flask import Flask, request, render_template_string
 import requests
 from datetime import datetime
-import python-dotenv
+from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
